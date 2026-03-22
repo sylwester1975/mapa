@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa S10 Płock 2026</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+        }
+        img {
+            max-width: 100%; /* Obrazek dopasowany do okna na start */
+            height: auto;
+            display: block;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        /* Klasa dodawana po kliknięciu - powiększenie */
+        img.zoomed {
+            max-width: none;
+            cursor: zoom-out;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Twoja mapa z funkcją powiększania po kliknięciu -->
+    <img src="droga-s10-plock-2026.png" id="mapaS10" onclick="toggleZoom()">
+
+    <script>
+        function toggleZoom() {
+            const img = document.getElementById('mapaS10');
+            img.classList.toggle('zoomed');
+        }
+    </script>
+
+</body>
+</html>
