@@ -4,86 +4,44 @@
     <meta charset="UTF-8">
     <title>Mapa S10 Płock 2026</title>
     <style>
-        body { margin: 0; padding: 0; background: #f0f0f0; font-family: sans-serif; overflow: hidden; }
-        
-        /* SZARY PANEL NA GÓRZE (jak w PDF) */
-        .toolbar {
-            height: 48px; background: #323639; display: flex; 
-            align-items: center; justify-content: center; gap: 20px;
-            color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            position: relative; z-index: 100;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            text-align: center; /* Startowe wyśrodkowanie */
         }
-        .btn {
-            background: #444; border: none; color: white; padding: 5px 15px;
-            border-radius: 4px; cursor: pointer; font-size: 18px;
-        }
-        .btn:hover { background: #555; }
-
-        /* KONTENER MAPY */
-        #viewport {
-            width: 100vw; height: calc(100vh - 48px);
-            overflow: auto; background: white; cursor: grab;
-            display: flex; justify-content: center; align-items: flex-start;
-        }
-        #viewport:active { cursor: grabbing; }
-
         img {
-            max-width: 100%; height: auto; display: block;
-            user-select: none; -webkit-user-drag: none;
-            transform-origin: top center; transition: transform 0.1s;
+            max-width: 100%;
+            height: auto;
+            display: inline-block;
+            vertical-align: top;
+            cursor: zoom-in;
+        }
+        img.zoomed {
+            max-width: none;
+            display: block;
+            margin: 0;
+            cursor: zoom-out;
         }
     </style>
 </head>
 <body>
 
-    <div class="toolbar">
-        <span>Mapa S10 - Płock 2026</span>
-        <button class="btn" onclick="changeZoom(0.9)">–</button>
-        <button class="btn" onclick="changeZoom(1.1)">+</button>
-        <button class="btn" onclick="resetZoom()">⟲</button>
-    </div>
+    <img src="droga-s10-plock-2026.png" id="mapaS10" onclick="toggleZoom()">
 
-    <div id="viewport">
-        <img src="droga-s10-plock-2026.png" id="mapa">
-    </div>
+    <script>
+        function toggleZoom() {
+            const img = document.getElementById('mapaS10');
+            img.classList.toggle('zoomed');
+            
+            // Kluczowa zmiana: wymuszenie lewej krawędzi przy powiększeniu
+            if (img.classList.contains('zoomed')) {
+                document.body.style.textAlign = 'left';
+            } else {
+                document.body.style.textAlign = 'center';
+            }
+        }
+    </script>
 
-<script>
-    const img = document.getElementById('mapa');
-    const view = document.getElementById('viewport');
-    let scale = 1;
-
-    function changeZoom(factor) {
-        scale *= factor;
-        img.style.maxWidth = 'none';
-        img.style.transform = `scale(${scale})`;
-    }
-
-    function resetZoom() {
-        scale = 1;
-        img.style.maxWidth = '100%';
-        img.style.transform = `scale(1)`;
-        view.scrollTo(0,0);
-    }
-
-    // FUNKCJA ŁAPKI (PRZECIĄGANIE)
-    let isDown = false; let startX, startY, scrollLeft, scrollTop;
-
-    view.addEventListener('mousedown', (e) => {
-        isDown = true;
-        startX = e.pageX - view.offsetLeft;
-        startY = e.pageY - view.offsetTop;
-        scrollLeft = view.scrollLeft;
-        scrollTop = view.scrollTop;
-    });
-    window.addEventListener('mouseup', () => isDown = false);
-    view.addEventListener('mousemove', (e) => {
-        if(!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - view.offsetLeft;
-        const y = e.pageY - view.offsetTop;
-        view.scrollLeft = scrollLeft - (x - startX);
-        view.scrollTop = scrollTop - (y - startY);
-    });
-</script>
 </body>
 </html>
