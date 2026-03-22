@@ -4,48 +4,74 @@
     <meta charset="UTF-8">
     <title>Mapa S10 Płock 2026</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: white;
-            /* Usunęliśmy flex, aby pozwolić na naturalne przewijanie strony */
-            text-align: center; 
+        body { 
+            margin: 0; padding: 0; background: white; 
+            overflow-x: auto; overflow-y: hidden; /* Ukrywa pionowy suwak, zostawia poziomy */
+            text-align: center;
+        }
+        #container {
+            width: 100%; display: flex; justify-content: center;
         }
         img {
-            max-width: 100%; /* Na start dopasowany do szerokości okna */
-            height: auto;
-            display: inline-block;
-            vertical-align: top; /* Przyklejenie do samej góry */
-            cursor: zoom-in;
-            transition: transform 0.2s ease;
+            max-width: 100%; height: auto; display: block;
+            cursor: zoom-in; transition: transform 0.2s ease;
+            user-select: none; -webkit-user-drag: none; /* Blokuje systemowe przeciąganie obrazka */
         }
-        /* Klasa po kliknięciu - pełny rozmiar i możliwość przewijania */
+        /* Styl po powiększeniu */
         img.zoomed {
-            max-width: none;
-            display: block; /* Zmiana na block pozwala na swobodny scroll lewo-prawo */
-            margin: 0;      /* Dosunięcie do lewej krawędzi przy dużym rozmiarze */
-            cursor: zoom-out;
+            max-width: none; cursor: grab; /* Łapka */
+        }
+        img.zoomed:active {
+            cursor: grabbing; /* Zamknięta łapka przy trzymaniu */
         }
     </style>
 </head>
 <body>
 
-    <!-- Twoja mapa z funkcją powiększania po kliknięciu -->
-    <img src="droga-s10-plock-2026.png" id="mapaS10" onclick="toggleZoom()">
+<div id="container">
+    <img src="droga-s10-plock-2026.png" id="mapa" onclick="toggleZoom(event)">
+</div>
 
-    <script>
-        function toggleZoom() {
-            const img = document.getElementById('mapaS10');
-            img.classList.toggle('zoomed');
-            
-            // Jeśli obrazek jest powiększony, upewnij się, że strona pozwala na scroll
-            if (img.classList.contains('zoomed')) {
-                document.body.style.textAlign = 'left';
-            } else {
-                document.body.style.textAlign = 'center';
-            }
+<script>
+    const img = document.getElementById('mapa');
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    function toggleZoom(e) {
+        // Powiększamy tylko jeśli nie przesuwaliśmy obrazka
+        if (img.classList.contains('zoomed')) {
+            img.classList.remove('zoomed');
+            document.body.style.overflowX = 'hidden';
+        } else {
+            img.classList.add('zoomed');
+            document.body.style.overflowX = 'auto';
+            // Po powiększeniu ustawiamy na lewo
+            window.scrollTo(0, 0);
         }
-    </script>
+    }
+
+    // Obsługa przeciągania "łapką"
+    const slider = document.body;
+
+    slider.addEventListener('mousedown', (e) => {
+        if (!img.classList.contains('zoomed')) return;
+        isDown = true;
+        startX = e.pageX - slider.offsetLeft;
+        scrollLeft = window.scrollX;
+    });
+
+    slider.addEventListener('mouseleave', () => { isDown = false; });
+    slider.addEventListener('mouseup', () => { isDown = false; });
+
+    slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - startX) * 2; // Prędkość przesuwania
+        window.scrollTo(scrollLeft - walk, 0);
+    });
+</script>
 
 </body>
 </html>
