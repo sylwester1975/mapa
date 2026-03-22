@@ -8,19 +8,22 @@
             margin: 0;
             padding: 0;
             background-color: white;
-            display: flex;
-            justify-content: center;
+            /* Usunęliśmy flex, aby pozwolić na naturalne przewijanie strony */
+            text-align: center; 
         }
         img {
-            max-width: 100%; /* Obrazek dopasowany do okna na start */
+            max-width: 100%; /* Na start dopasowany do szerokości okna */
             height: auto;
-            display: block;
+            display: inline-block;
+            vertical-align: top; /* Przyklejenie do samej góry */
             cursor: zoom-in;
             transition: transform 0.2s ease;
         }
-        /* Klasa dodawana po kliknięciu - powiększenie */
+        /* Klasa po kliknięciu - pełny rozmiar i możliwość przewijania */
         img.zoomed {
             max-width: none;
+            display: block; /* Zmiana na block pozwala na swobodny scroll lewo-prawo */
+            margin: 0;      /* Dosunięcie do lewej krawędzi przy dużym rozmiarze */
             cursor: zoom-out;
         }
     </style>
@@ -34,6 +37,13 @@
         function toggleZoom() {
             const img = document.getElementById('mapaS10');
             img.classList.toggle('zoomed');
+            
+            // Jeśli obrazek jest powiększony, upewnij się, że strona pozwala na scroll
+            if (img.classList.contains('zoomed')) {
+                document.body.style.textAlign = 'left';
+            } else {
+                document.body.style.textAlign = 'center';
+            }
         }
     </script>
 
